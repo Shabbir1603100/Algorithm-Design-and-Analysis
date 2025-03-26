@@ -8,10 +8,9 @@ def maximize_project_weight(n, weights, dependencies):
     
     for u, v in dependencies:
         graph[u].append(v)
-        reverse_graph[v].append(u)  # Reverse graph for backtracking
+        reverse_graph[v].append(u)
         in_degree[v] += 1
 
-    # Topological Sorting using Kahn's Algorithm
     topo_order = []
     queue = deque()
     
@@ -27,17 +26,15 @@ def maximize_project_weight(n, weights, dependencies):
             if in_degree[v] == 0:
                 queue.append(v)
     
-    # DP Array to store the maximum weight achievable at each project
     dp = weights[:]
-    best_subset = {i: {i} for i in range(n)}  # Store selected projects for each node
+    best_subset = {i: {i} for i in range(n)}
     
     for u in topo_order:
         for v in graph[u]:
             if dp[v] < dp[u] + weights[v]:
                 dp[v] = dp[u] + weights[v]
-                best_subset[v] = best_subset[u] | {v}  # Ensure all dependencies are included
+                best_subset[v] = best_subset[u] | {v} 
     
-    # Find the optimal subset
     max_weight = float('-inf')
     optimal_subset = set()
     
@@ -46,7 +43,6 @@ def maximize_project_weight(n, weights, dependencies):
             max_weight = dp[i]
             optimal_subset = best_subset[i]
     
-    # Ensure all predecessors of the selected projects are included
     final_selected = set()
     def collect_dependencies(node):
         if node in final_selected:
@@ -60,10 +56,9 @@ def maximize_project_weight(n, weights, dependencies):
     
     selected_projects = sorted(final_selected)
     
-    print(sum(weights[i] for i in selected_projects))  # Compute actual sum again
+    print(sum(weights[i] for i in selected_projects))
     print(f"The optimum solution selects projects {', '.join(str(i + 1) for i in selected_projects)}.")
 
-# Read input from standard input
 if __name__ == "__main__":
     n, m = map(int, sys.stdin.readline().split())
     weights = list(map(int, sys.stdin.readline().split()))
